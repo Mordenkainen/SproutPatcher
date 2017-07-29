@@ -1,0 +1,16 @@
+[
+{
+  "modid": "sproutpatcher",
+  "name": "Sprout Patcher",
+  "description": "Patcher to fix bugs in Sprout Mods.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Mordenkainen"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
