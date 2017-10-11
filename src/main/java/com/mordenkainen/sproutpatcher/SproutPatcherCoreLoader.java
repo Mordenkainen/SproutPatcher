@@ -1,17 +1,27 @@
 package com.mordenkainen.sproutpatcher;
 
+import java.io.File;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
+import com.mordenkainen.sproutpatcher.config.ConfigFile;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 @MCVersion("1.10.2")
 @Name(Reference.MOD_NAME + " Core")
 @IFMLLoadingPlugin.SortingIndex(1001)
+@TransformerExclusions({"com.mordenkainen.sproutpatcher.config", "com.mordenkainen.sproutpatcher.asmhelper"})
 public class SproutPatcherCoreLoader implements IFMLLoadingPlugin {
 
-    public static boolean DEOBF = false;
+    public static ConfigFile config;
+    public static Logger logger = LogManager.getLogger("SproutPatcher");
 
     @Override
     public String[] getASMTransformerClass() {
@@ -30,7 +40,14 @@ public class SproutPatcherCoreLoader implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(final Map<String, Object> data) {
-        DEOBF = !(Boolean) data.get("runtimeDeobfuscationEnabled");
+        ObfHelper.setObfuscated((Boolean) data.get("runtimeDeobfuscationEnabled"));
+        ObfHelper.setRunsAfterDeobfRemapper(true);
+        try {
+            String mcDir = data.get("mcLocation").toString();
+            File file = new File(mcDir + "/config/SproutPatcher.cfg");
+            config = new ConfigFile(file).setComment("SproutPatcher configuration file.");
+        } catch (Exception e) {}
+
     }
 
     @Override

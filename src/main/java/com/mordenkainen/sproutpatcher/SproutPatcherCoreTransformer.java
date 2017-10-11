@@ -1,20 +1,9 @@
 package com.mordenkainen.sproutpatcher;
 
-import java.util.Iterator;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import com.mordenkainen.sproutpatcher.patches.BotaniaPatcher;
+import com.mordenkainen.sproutpatcher.patches.CabinetPatcher;
+import com.mordenkainen.sproutpatcher.patches.IPatch;
+import com.mordenkainen.sproutpatcher.patches.ReComplexPatcher;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -24,10 +13,22 @@ import net.minecraft.world.World;
 import rustic.common.blocks.BlockCabinet;
 
 public class SproutPatcherCoreTransformer implements IClassTransformer {
+    private static IPatch[] patches= {new CabinetPatcher(), new ReComplexPatcher(), new BotaniaPatcher()};
     
     @Override
     public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
-        if ("rustic.common.tileentity.TileEntityCabinet".equals(name)) {
+        byte[] workingClass = basicClass.clone();
+        
+        for (IPatch patch : patches) {
+            if (patch.shouldLoad()) {
+                workingClass = patch.transform(name, transformedName, workingClass);
+            }
+        }
+        
+        return workingClass;
+
+        
+        /*if ("rustic.common.tileentity.TileEntityCabinet".equals(name)) {
             final ClassReader cr = new ClassReader(basicClass);
 
             final ClassNode classNode = new ClassNode();
@@ -103,7 +104,7 @@ public class SproutPatcherCoreTransformer implements IClassTransformer {
             return cw.toByteArray();
         }
 
-        return basicClass;
+        return basicClass;*/
     }
     
     @SuppressWarnings("deprecation")
