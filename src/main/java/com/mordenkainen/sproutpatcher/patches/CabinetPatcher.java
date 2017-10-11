@@ -85,43 +85,7 @@ public class CabinetPatcher implements IPatch {
             
             return ASMHelper.writeClassToBytes(classNode, ClassWriter.COMPUTE_MAXS);
         }
-            
-            
-            /*done:
-            for (final MethodNode methodNode : classNode.methods) {
-                if ("renderTileEntityAt".equals(methodNode.name) && "(Lrustic/common/tileentity/TileEntityCabinet;DDDFI)V".equals(methodNode.desc)) {
-                    LabelNode label1 = new LabelNode();
-                    LabelNode label2 = new LabelNode();
-                    final Iterator<AbstractInsnNode> insnNodes = methodNode.instructions.iterator();
-                    
-                    while (insnNodes.hasNext()) {
-                        final AbstractInsnNode insn = insnNodes.next();
-                        if (insn.getOpcode() == Opcodes.INVOKESTATIC) {
-                            final InsnList endList = new InsnList();
-                            endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "rustic/common/tileentity/TileEntityCabinet", !ObfHelper.isObfuscated() ? "hasWorldObj" : "func_145830_o", "()Z", false));
-                            endList.add(new JumpInsnNode(Opcodes.IFEQ, label1));
-                            endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "rustic/common/tileentity/TileEntityCabinet", !ObfHelper.isObfuscated() ? "getWorld" : "func_145831_w", "()Lnet/minecraft/world/World;", false));
-                            endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "rustic/common/tileentity/TileEntityCabinet", !ObfHelper.isObfuscated() ? "getPos" : "func_174877_v", "()Lnet/minecraft/util/math/BlockPos;", false));
-                            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/World", !ObfHelper.isObfuscated() ? "getBlockState" : "func_180495_p", "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false));
-                            endList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", !ObfHelper.isObfuscated() ? "getBlock" : "func_177230_c", "()Lnet/minecraft/block/Block;", true));
-                            endList.add(new FieldInsnNode(Opcodes.GETSTATIC, "rustic/common/blocks/ModBlocks", "CABINET", "Lrustic/common/blocks/BlockCabinet;"));
-                            endList.add(new JumpInsnNode(Opcodes.IF_ACMPEQ, label2));
-                            endList.add(label1);
-                            endList.add(new InsnNode(Opcodes.RETURN));
-                            endList.add(label2);
-                            methodNode.instructions.insertBefore(insn, endList);
-                            break done;
-                        }
-                    }
-                }
-            }
-            
-            
-        }*/
-        
+
         return basicClass;
     }
     
