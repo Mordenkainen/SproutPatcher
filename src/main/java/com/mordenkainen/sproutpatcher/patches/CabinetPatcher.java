@@ -13,7 +13,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
+import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
 
@@ -27,7 +27,7 @@ public class CabinetPatcher implements IPatch {
 
     @Override
     public boolean shouldLoad() {
-        return SproutPatcherCoreLoader.config.getTag("RusticCabinet").setComment("Patch Rustic Cabinet Rendering to prevent crash.").getBooleanValue(true);
+        return SproutConfig.CabinetPatch;
     }
     
     @Override
