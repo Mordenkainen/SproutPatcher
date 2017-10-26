@@ -8,7 +8,7 @@ public class SproutConfig {
     public static boolean BedPatch = true;
     public static boolean BotaniaPatch = true;
     public static boolean CabinetPatch = true;
-    public static boolean SoundPatch = true;
+    public static boolean SoundPatch = false;
     public static boolean RCPatch = true;
     public static boolean IceAndFirePatch = true;
     
