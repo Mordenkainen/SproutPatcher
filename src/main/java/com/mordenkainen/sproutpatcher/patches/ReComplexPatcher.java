@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 
@@ -19,12 +20,13 @@ public class ReComplexPatcher implements IPatch {
 
     @Override
     public boolean shouldLoad() {
-        return SproutPatcherCoreLoader.config.getTag("RecurrentComplex").setComment("Patch Recurrent Complex Script block Redstone Handling.").getBooleanValue(true);
+        return SproutConfig.RCPatch;
     }
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("ivorius.reccomplex.block.TileEntityBlockScript".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching TileEntityBlockScript");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             
             MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "<init>", "()V");

@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 
@@ -16,12 +17,13 @@ public class BotaniaPatcher implements IPatch {
 
     @Override
     public boolean shouldLoad() {
-        return SproutPatcherCoreLoader.config.getTag("Marimorphosis").setComment("Patch Marimorhposis crash.").getBooleanValue(true);
+        return SproutConfig.BotaniaPatch;
     }
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("vazkii.botania.common.block.subtile.functional.SubTileMarimorphosis".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching SubTileMarimorphosis");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             
             MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "getStoneToPut", "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;");

@@ -13,6 +13,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
@@ -27,12 +28,13 @@ public class CabinetPatcher implements IPatch {
 
     @Override
     public boolean shouldLoad() {
-        return SproutPatcherCoreLoader.config.getTag("RusticCabinet").setComment("Patch Rustic Cabinet Rendering to prevent crash.").getBooleanValue(true);
+        return SproutConfig.CabinetPatch;
     }
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("rustic.common.tileentity.TileEntityCabinet".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching TileEntityCabinet");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
 
             final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "getRenderBoundingBox", "()Lnet/minecraft/util/math/AxisAlignedBB;");
@@ -56,6 +58,7 @@ public class CabinetPatcher implements IPatch {
         }
         
         if ("rustic.client.renderer.CabinetRenderer".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching CabinetRenderer");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
 
             final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "renderTileEntityAt", "(Lrustic/common/tileentity/TileEntityCabinet;DDDFI)V");

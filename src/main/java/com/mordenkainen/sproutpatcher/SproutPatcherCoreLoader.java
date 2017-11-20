@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
-import com.mordenkainen.sproutpatcher.config.ConfigFile;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
@@ -17,10 +16,9 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions
 @MCVersion("1.10.2")
 @Name(Reference.MOD_NAME + " Core")
 @IFMLLoadingPlugin.SortingIndex(1001)
-@TransformerExclusions({"com.mordenkainen.sproutpatcher.config", "com.mordenkainen.sproutpatcher.asmhelper"})
+@TransformerExclusions({"com.mordenkainen.sproutpatcher.SproutConfig", "com.mordenkainen.sproutpatcher.config", "com.mordenkainen.sproutpatcher.asmhelper"})
 public class SproutPatcherCoreLoader implements IFMLLoadingPlugin {
 
-    public static ConfigFile config;
     public static Logger logger = LogManager.getLogger("SproutPatcher");
 
     @Override
@@ -45,7 +43,7 @@ public class SproutPatcherCoreLoader implements IFMLLoadingPlugin {
         try {
             String mcDir = data.get("mcLocation").toString();
             File file = new File(mcDir + "/config/SproutPatcher.cfg");
-            config = new ConfigFile(file).setComment("SproutPatcher configuration file.");
+            SproutConfig.loadConfig(file);
         } catch (Exception e) {}
 
     }
