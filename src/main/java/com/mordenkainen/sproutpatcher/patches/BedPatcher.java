@@ -15,7 +15,6 @@ import org.objectweb.asm.tree.VarInsnNode;
 import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
-import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,7 +32,6 @@ public class BedPatcher implements IPatch {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("net.minecraft.world.ServerWorldEventHandler".equals(transformedName)) {
-            String a = ObfHelper.forceToDeobfClassName("net.minecraft.world.ServerWorldEventHandler");
             SproutPatcherCoreLoader.logger.info("Patching ServerWorldEventHandler");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass, ClassReader.EXPAND_FRAMES);
             final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "func_72709_b", "onEntityRemoved", "(Lnet/minecraft/entity/Entity;)V");
@@ -54,9 +52,6 @@ public class BedPatcher implements IPatch {
     
     public static void onEntityRemoved(ServerWorldEventHandler server, Entity entityIn) {
         if (!(entityIn instanceof EntityPlayerMP) || ((EntityPlayerMP) entityIn).isDead) {
-            if (entityIn instanceof EntityPlayerMP) {
-                SproutPatcherCoreLoader.logger.info("Removing player: " + entityIn.getName());
-            }
             try {
                 if (method == null) {
                     SproutPatcherCoreLoader.logger.info("onEntityRemove_org method null. Loading...");
@@ -66,7 +61,6 @@ public class BedPatcher implements IPatch {
             } catch (Exception e) {}
             return;
         }
-        SproutPatcherCoreLoader.logger.info("Skipping player: " + entityIn.getName());
     }
     
 }

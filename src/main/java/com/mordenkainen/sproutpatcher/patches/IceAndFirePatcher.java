@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.github.alexthe666.iceandfire.core.ModItems;
 import com.mordenkainen.sproutpatcher.SproutConfig;
+import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,7 @@ public class IceAndFirePatcher implements IPatch {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("com.github.alexthe666.iceandfire.core.ModItems".equals(transformedName)) {
+            SproutPatcherCoreLoader.logger.info("Patching Ice and Fire ModItems");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "init", "()V");
 

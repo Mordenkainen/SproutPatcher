@@ -15,7 +15,6 @@ public class SproutPatcherCoreTransformer implements IClassTransformer {
     
     @Override
     public byte[] transform(final String name, final String transformedName, byte[] basicClass) {
-        //SproutPatcherCoreLoader.logger.info("Scanning: " + name);
         
         for (IPatch patch : patches) {
             if (patch.shouldLoad()) {

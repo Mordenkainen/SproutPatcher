@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import com.mordenkainen.sproutpatcher.SproutConfig;
+import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 
 public class SoundPatcher implements IPatch {
@@ -24,12 +25,14 @@ public class SoundPatcher implements IPatch {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if ("paulscode.sound.Source".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching paulscode Source");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             classNode.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "removed", "Z", null, null));
             return ASMHelper.writeClassToBytes(classNode, ClassWriter.COMPUTE_FRAMES);
         }
             
         if ("paulscode.sound.Library".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching paulscode Library");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             
             MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "removeSource", "(Ljava/lang/String;)V");
@@ -46,6 +49,7 @@ public class SoundPatcher implements IPatch {
         }
         
         if ("paulscode.sound.StreamThread".equals(name)) {
+            SproutPatcherCoreLoader.logger.info("Patching paulscode StreamThread");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "run", "()V");
             for (ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();) {
