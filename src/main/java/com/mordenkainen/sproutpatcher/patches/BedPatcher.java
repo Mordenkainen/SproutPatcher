@@ -1,13 +1,14 @@
 package com.mordenkainen.sproutpatcher.patches;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -15,14 +16,14 @@ import org.objectweb.asm.tree.VarInsnNode;
 import com.mordenkainen.sproutpatcher.SproutConfig;
 import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
+import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.ServerWorldEventHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.world.World;
 
 public class BedPatcher implements IPatch {
-
-    static Method method;
     
     @Override
     public boolean shouldLoad() {
@@ -31,18 +32,18 @@ public class BedPatcher implements IPatch {
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if ("net.minecraft.world.ServerWorldEventHandler".equals(transformedName)) {
-            SproutPatcherCoreLoader.logger.info("Patching ServerWorldEventHandler");
-            final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass, ClassReader.EXPAND_FRAMES);
-            final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "func_72709_b", "onEntityRemoved", "(Lnet/minecraft/entity/Entity;)V");
-            ASMHelper.copyAndRenameMethod(classNode, method, "onEntityRemove_org");
-            method.instructions.clear();
+        if ("net.minecraft.world.chunk.Chunk".equals(transformedName)) {
+            SproutPatcherCoreLoader.logger.info("Patching Chunk");
+            final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
+            final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "func_76623_d", "onChunkUnload", "()V");
             final InsnList insnList = new InsnList();
             insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mordenkainen/sproutpatcher/patches/BedPatcher", "onEntityRemoved", "(Lnet/minecraft/world/ServerWorldEventHandler;Lnet/minecraft/entity/Entity;)V", false));
-            insnList.add(new InsnNode(Opcodes.RETURN));
-            method.instructions.insert(insnList);
+            insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/chunk/Chunk", ObfHelper.isObfuscated() ? "field_76637_e" : "worldObj", "Lnet/minecraft/world/World;"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/chunk/Chunk", ObfHelper.isObfuscated() ? "field_76645_j" : "entityLists", "[Lnet/minecraft/util/ClassInheritanceMultiMap;"));
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mordenkainen/sproutpatcher/patches/BedPatcher", "onChunkUnload", "(Lnet/minecraft/world/World;[Lnet/minecraft/util/ClassInheritanceMultiMap;)V", false));
+            AbstractInsnNode insert = ASMHelper.findFirstInstruction(method);
+            method.instructions.insertBefore(insert, insnList);
             
             return ASMHelper.writeClassToBytes(classNode, ClassWriter.COMPUTE_FRAMES);
         }
@@ -50,16 +51,15 @@ public class BedPatcher implements IPatch {
         return basicClass;
     }
     
-    public static void onEntityRemoved(ServerWorldEventHandler server, Entity entityIn) {
-        if (!(entityIn instanceof EntityPlayerMP) || ((EntityPlayerMP) entityIn).isDead) {
-            try {
-                if (method == null) {
-                    SproutPatcherCoreLoader.logger.info("onEntityRemove_org method null. Loading...");
-                    method = server.getClass().getMethod("onEntityRemove_org", new Class[] {Entity.class});
-                }
-                method.invoke(server, entityIn);
-            } catch (Exception e) {}
-            return;
+    public static void onChunkUnload(World world, ClassInheritanceMultiMap<Entity>[] entityLists) {
+        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+        for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : entityLists) {
+            for(EntityPlayer player : classinheritancemultimap.getByClass(EntityPlayer.class)) {
+                players.add(player);
+            }
+        }
+        for (EntityPlayer player : players) {
+            world.updateEntityWithOptionalForce(player, false);
         }
     }
     
