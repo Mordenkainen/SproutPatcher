@@ -51,7 +51,7 @@ public class SoundPatcher implements IPatch {
             SproutPatcherCoreLoader.logger.info("Patching paulscode StreamThread");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             final MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "run", "()V");
-            for (ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();) {
+            for (final ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();) {
                 AbstractInsnNode insn = (AbstractInsnNode) iterator.next();
                 if(insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("java/util/ListIterator") && ((MethodInsnNode) insn).name.equals("next")) {
                     insn = insn.getNext().getNext();

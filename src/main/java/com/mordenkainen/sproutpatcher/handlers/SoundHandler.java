@@ -7,9 +7,9 @@ import paulscode.sound.Source;
 
 public final class SoundHandler {
     
-    private SoundHandler() {}
-    
     public static Field removed = ReflectionHelper.findField(Source.class, "removed");
+    
+    private SoundHandler() {}
     
     public static Source removeSource(final Source source) {
         try {

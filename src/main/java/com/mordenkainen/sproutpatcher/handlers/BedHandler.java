@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.world.World;
 
-public class BedHandler {
+public final class BedHandler {
 
     private BedHandler() {}
     

@@ -20,7 +20,7 @@ import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
 
 public class CabinetPatcher implements IPatch {
 
-    private String cabinet = "rustic/common/tileentity/TileEntityCabinet";
+    private final static String CABINET = "rustic/common/tileentity/TileEntityCabinet";
     
     @Override
     public boolean shouldLoad() {
@@ -41,9 +41,9 @@ public class CabinetPatcher implements IPatch {
             final InsnList endList = new InsnList();
             endList.add(new VarInsnNode(Opcodes.ALOAD, 0));
             endList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            endList.add(new FieldInsnNode(Opcodes.GETFIELD, cabinet, ObfHelper.isObfuscated() ? "field_145850_b" : "worldObj", "Lnet/minecraft/world/World;"));
+            endList.add(new FieldInsnNode(Opcodes.GETFIELD, CABINET, ObfHelper.isObfuscated() ? "field_145850_b" : "worldObj", "Lnet/minecraft/world/World;"));
             endList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            endList.add(new FieldInsnNode(Opcodes.GETFIELD, cabinet, ObfHelper.isObfuscated() ? "field_174879_c" : "pos", "Lnet/minecraft/util/math/BlockPos;"));
+            endList.add(new FieldInsnNode(Opcodes.GETFIELD, CABINET, ObfHelper.isObfuscated() ? "field_174879_c" : "pos", "Lnet/minecraft/util/math/BlockPos;"));
             endList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mordenkainen/sproutpatcher/handlers/CabinetHandler", "getRenderBoundingBox", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/math/AxisAlignedBB;", false));
             endList.add(new InsnNode(Opcodes.ARETURN));
             
@@ -75,12 +75,12 @@ public class CabinetPatcher implements IPatch {
             final LabelNode label2 = new LabelNode();
             final InsnList endList = new InsnList();
             endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cabinet, ObfHelper.isObfuscated() ? "func_145830_o" : "hasWorldObj", "()Z", false));
+            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, CABINET, ObfHelper.isObfuscated() ? "func_145830_o" : "hasWorldObj", "()Z", false));
             endList.add(new JumpInsnNode(Opcodes.IFEQ, label1));
             endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cabinet, ObfHelper.isObfuscated() ? "func_145831_w" : "getWorld", "()Lnet/minecraft/world/World;", false));
+            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, CABINET, ObfHelper.isObfuscated() ? "func_145831_w" : "getWorld", "()Lnet/minecraft/world/World;", false));
             endList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cabinet, ObfHelper.isObfuscated() ? "func_174877_v" : "getPos", "()Lnet/minecraft/util/math/BlockPos;", false));
+            endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, CABINET, ObfHelper.isObfuscated() ? "func_174877_v" : "getPos", "()Lnet/minecraft/util/math/BlockPos;", false));
             endList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/World", ObfHelper.isObfuscated() ?"func_180495_p" :  "getBlockState", "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false));
             endList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", ObfHelper.isObfuscated() ? "func_177230_c" :  "getBlock", "()Lnet/minecraft/block/Block;", true));
             endList.add(new FieldInsnNode(Opcodes.GETSTATIC, "rustic/common/blocks/ModBlocks", "CABINET", "Lrustic/common/blocks/BlockCabinet;"));
