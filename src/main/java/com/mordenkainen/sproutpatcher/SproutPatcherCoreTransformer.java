@@ -14,16 +14,17 @@ public class SproutPatcherCoreTransformer implements IClassTransformer {
     private static IPatch[] patches= {new CabinetPatcher(), new ReComplexPatcher(), new BotaniaPatcher(), new SoundPatcher(), new BedPatcher(), new IceAndFirePatcher()};
     
     @Override
-    public byte[] transform(final String name, final String transformedName, byte[] basicClass) {
+    public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
         
-        for (IPatch patch : patches) {
+        byte[] transformedClass = basicClass.clone();
+        
+        for (final IPatch patch : patches) {
             if (patch.shouldLoad()) {
-                basicClass = patch.transform(name, transformedName, basicClass);
+                transformedClass = patch.transform(name, transformedName, basicClass);
             }
         }
         
-        return basicClass;
-
+        return transformedClass;
     }
 
 }

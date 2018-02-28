@@ -1,15 +1,17 @@
-package com.mordenkainen.sproutpatcher.patches;
+package com.mordenkainen.sproutpatcher.handlers;
 
 import java.lang.reflect.Field;
 
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import paulscode.sound.Source;
 
-public class SoundFix {
+public final class SoundHandler {
+    
+    private SoundHandler() {}
     
     public static Field removed = ReflectionHelper.findField(Source.class, "removed");
     
-    public static Source removeSource(Source source) {
+    public static Source removeSource(final Source source) {
         try {
             if(removed.getBoolean(source)) {
                 source.cleanup();
@@ -21,7 +23,7 @@ public class SoundFix {
         return source;
     }
     
-    public static void cleanupSource(Source source) {
+    public static void cleanupSource(final Source source) {
         if(source.toStream) {
             try {
                 removed.setBoolean(source, true);

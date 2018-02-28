@@ -6,5 +6,5 @@ public interface IPatch {
         return true;
     }
     
-    byte[] transform(final String name, final String transformedName, final byte[] basicClass);
+    byte[] transform(String name, String transformedName, byte[] basicClass);
 }

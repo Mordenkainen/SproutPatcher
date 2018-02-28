@@ -41,8 +41,8 @@ public class SproutPatcherCoreLoader implements IFMLLoadingPlugin {
         ObfHelper.setObfuscated((Boolean) data.get("runtimeDeobfuscationEnabled"));
         ObfHelper.setRunsAfterDeobfRemapper(true);
         try {
-            String mcDir = data.get("mcLocation").toString();
-            File file = new File(mcDir + "/config/SproutPatcher.cfg");
+            final String mcDir = data.get("mcLocation").toString();
+            final File file = new File(mcDir + "/config/SproutPatcher.cfg");
             SproutConfig.loadConfig(file);
         } catch (Exception e) {}
 

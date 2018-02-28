@@ -24,36 +24,39 @@ public class ReComplexPatcher implements IPatch {
     }
     
     @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+    public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
         if ("ivorius.reccomplex.block.TileEntityBlockScript".equals(name)) {
             SproutPatcherCoreLoader.logger.info("Patching TileEntityBlockScript");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
             
             MethodNode method = ASMHelper.findMethodNodeOfClass(classNode, "<init>", "()V");
-            if (method != null) {
-                AbstractInsnNode targetNode = ASMHelper.findLastInstructionWithOpcode(method, Opcodes.ICONST_0);
-                if (targetNode != null) {
-                    method.instructions.set(targetNode, new InsnNode(Opcodes.ICONST_1));
-                }
+            if (method == null) {
+                return basicClass;
+            }
+            
+            AbstractInsnNode targetNode = ASMHelper.findLastInstructionWithOpcode(method, Opcodes.ICONST_0);
+            if (targetNode != null) {
+                method.instructions.set(targetNode, new InsnNode(Opcodes.ICONST_1));
             }
             
             method = ASMHelper.findMethodNodeOfClass(classNode, "shouldPlaceInWorld", "(Livorius/reccomplex/world/gen/feature/structure/context/StructureSpawnContext;Livorius/reccomplex/world/gen/script/WorldScriptMulti$InstanceData;)Z");
-            if (method != null) {
-                LabelNode label1 = new LabelNode();
-                LabelNode label2 = new LabelNode();
-                final InsnList insnList = new InsnList();
-                insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "ivorius/reccomplex/block/TileEntityBlockScript", "spawnTriggerable", "Z"));
-                insnList.add(new JumpInsnNode(Opcodes.IFNE, label1));
-                insnList.add(new InsnNode(Opcodes.ICONST_1));
-                insnList.add(new JumpInsnNode(Opcodes.GOTO, label2));
-                insnList.add(label1);
-                AbstractInsnNode targetNode = ASMHelper.findLastInstructionWithOpcode(method, Opcodes.ICONST_0);
-                method.instructions.insertBefore(targetNode, insnList);
-                targetNode = targetNode.getNext();
-                method.instructions.insertBefore(targetNode, label2);
+            if (method == null) {
+                return basicClass;
             }
             
+            final LabelNode label1 = new LabelNode();
+            final LabelNode label2 = new LabelNode();
+            final InsnList insnList = new InsnList();
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "ivorius/reccomplex/block/TileEntityBlockScript", "spawnTriggerable", "Z"));
+            insnList.add(new JumpInsnNode(Opcodes.IFNE, label1));
+            insnList.add(new InsnNode(Opcodes.ICONST_1));
+            insnList.add(new JumpInsnNode(Opcodes.GOTO, label2));
+            insnList.add(label1);
+            targetNode = ASMHelper.findLastInstructionWithOpcode(method, Opcodes.ICONST_0);
+            method.instructions.insertBefore(targetNode, insnList);
+            targetNode = targetNode.getNext();
+            method.instructions.insertBefore(targetNode, label2);
             return ASMHelper.writeClassToBytes(classNode, ClassWriter.COMPUTE_FRAMES);
         }
         

@@ -1,8 +1,5 @@
 package com.mordenkainen.sproutpatcher.patches;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -18,11 +15,6 @@ import com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader;
 import com.mordenkainen.sproutpatcher.asmhelper.ASMHelper;
 import com.mordenkainen.sproutpatcher.asmhelper.ObfHelper;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ClassInheritanceMultiMap;
-import net.minecraft.world.World;
-
 public class BedPatcher implements IPatch {
     
     @Override
@@ -31,7 +23,7 @@ public class BedPatcher implements IPatch {
     }
     
     @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+    public byte[] transform(final String name, final String transformedName, final byte[] basicClass) {
         if ("net.minecraft.world.chunk.Chunk".equals(transformedName)) {
             SproutPatcherCoreLoader.logger.info("Patching Chunk");
             final ClassNode classNode = ASMHelper.readClassFromBytes(basicClass);
@@ -41,26 +33,14 @@ public class BedPatcher implements IPatch {
             insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/chunk/Chunk", ObfHelper.isObfuscated() ? "field_76637_e" : "worldObj", "Lnet/minecraft/world/World;"));
             insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
             insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/chunk/Chunk", ObfHelper.isObfuscated() ? "field_76645_j" : "entityLists", "[Lnet/minecraft/util/ClassInheritanceMultiMap;"));
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mordenkainen/sproutpatcher/patches/BedPatcher", "onChunkUnload", "(Lnet/minecraft/world/World;[Lnet/minecraft/util/ClassInheritanceMultiMap;)V", false));
-            AbstractInsnNode insert = ASMHelper.findFirstInstruction(method);
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/mordenkainen/sproutpatcher/handlers/BedHandler", "onChunkUnload", "(Lnet/minecraft/world/World;[Lnet/minecraft/util/ClassInheritanceMultiMap;)V", false));
+            final AbstractInsnNode insert = ASMHelper.findFirstInstruction(method);
             method.instructions.insertBefore(insert, insnList);
             
             return ASMHelper.writeClassToBytes(classNode, ClassWriter.COMPUTE_FRAMES);
         }
         
         return basicClass;
-    }
-    
-    public static void onChunkUnload(World world, ClassInheritanceMultiMap<Entity>[] entityLists) {
-        List<EntityPlayer> players = new ArrayList<EntityPlayer>();
-        for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : entityLists) {
-            for(EntityPlayer player : classinheritancemultimap.getByClass(EntityPlayer.class)) {
-                players.add(player);
-            }
-        }
-        for (EntityPlayer player : players) {
-            world.updateEntityWithOptionalForce(player, false);
-        }
     }
     
 }
