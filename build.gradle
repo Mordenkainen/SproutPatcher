@@ -34,6 +34,19 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+repositories {
+    ivy {
+        name 'Rustic'
+        ivyPattern "https://maven.tterrag.com/[module]-[revision].[ext]"
+        artifactPattern "http://media.forgecdn.net/files/${rustic_cf}/[module]-[revision].[ext]"
+    }
+    ivy {
+        name 'IceAndFire'
+        ivyPattern "https://maven.tterrag.com/[module]-[revision].[ext]"
+        artifactPattern "http://media.forgecdn.net/files/${iaf_cf}/[module]-[revision].[ext]"
+    }
+}
+
 jar {
     manifest {
         attributes 'FMLCorePlugin': 'com.mordenkainen.sproutpatcher.SproutPatcherCoreLoader',
@@ -62,7 +75,8 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    deobfCompile name: 'rustic', version: "${rustic_version}", ext: 'jar'
+    deobfCompile name: 'iceandfire', version: "${iaf_version}", ext: 'jar'
 }
 
 processResources
